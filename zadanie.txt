@@ -1,0 +1,93 @@
+import sqlite3
+ 
+connection = sqlite3.connect("example.db")
+cursor = connection.cursor()
+cursor.execute("CREATE TABLE IF NOT EXISTS users (username, password)")
+connection.commit()
+connection.close()
+ 
+
+
+def get_users():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    queryset = cursor.execute("SELECT * FROM users")
+    users = queryset.fetchall()
+    print("Lista użytowników: ", users)
+    connection.close()
+
+def register():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    username= input("Podaj login: ")
+    password= input("Podaj haslo: ")
+    cursor.execute('INSERT INTO users VALUES(?,?)',(username,password))
+    connection.commit()
+    connection.close()
+
+def login():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    username=input("Login: ")
+    queryset=cursor.execute("SELECT password FROM users WHERE username =?",[username])
+    password=queryset.fetchone()
+    sprawdzenie= input("Hasło: ")
+    if sprawdzenie==password:
+        print("Zalogowano")
+    else:
+        print("Niepoprawne haslo")
+    connection.close()
+
+
+def delete():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    username=input("Podaj login uzytkownika do usuniecia: ")
+    queryset=cursor.execute("SELECT password FROM users WHERE username =?",[username])
+    password=queryset.fetchone()
+    sprawdzenie= input("Podaj hasło: ")
+    if sprawdzenie==password:
+        cursor.execute("DELETE FROM users WHERE username= ? ",[username])
+        print("Usunieto uzytkownika")
+    else:
+        print("Niepoprawne haslo")
+    connection.close()
+
+
+def update():
+    connection = sqlite3.connect("login.db")
+    cursor = connection.cursor()
+    username=input("Podaj login:  ")
+    password=input("Podaj haslo: ")
+    sprawdzenie= input("Podaj hasło: ")
+    if sprawdzenie==password:
+        newPassword=input("Podaj nowe haslo: ")
+        cursor.execute("UPDATE users SET password=? WHERE username= ? ",(newPassword,username))
+        print("Haslo zostało zmienione!")
+    else:
+        print("Niepoprawne haslo")
+    connection.commit()
+    connection.close()
+ 
+while True:
+    print('1. Zarejestruj się')
+    print('2. Zobacz uzytkownikow')
+    print('3. Zaloguj się')
+    print('4. Usuń uzytkownika')
+    print('5. Zmodyfikuj uzytkownika')
+    print('0. Wyjdź z programu')
+    option = input('Wybierz opcję: ')
+    if option == "1":
+        username = input("Podaj swój login: ")
+        password = input("Podaj swoje hasło: ")
+        register()
+    elif option == "2":
+        get_users()
+    elif option == "3":
+        login()
+    elif option == "4":
+        delete()
+    elif option == "5":
+        update()
+    elif option == "0":
+        breaksu wystarczą same klasy obsługujące baze danych
